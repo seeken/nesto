@@ -13,7 +13,7 @@ defmodule Nesto.NestedSubform do
   """
 
 
-  def dep_subform(assigns) do
+  def nesto_subform(assigns) do
     ~H"""
     <.card>
       <.card_content heading={if assigns[:title] do @title else nil end}>
