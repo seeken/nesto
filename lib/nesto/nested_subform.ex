@@ -19,7 +19,7 @@ defmodule Nesto.NestedSubform do
     Most important, have your schema assocs setup correctly, with main schema has_many and the associated schema belongs_to.
 
     IN YOUR SUB SCHEMA:
-    ===============
+    -------------------
 
     add temp_id and delete virtual fields to the assoc's schema and changeset, and pass changeset through
     the maybe_mark_for_deletion.
@@ -39,8 +39,8 @@ defmodule Nesto.NestedSubform do
       end
     ```
 
-    IN YOUR CONTEXT
-    ===============
+    IN YOUR CONTEXT:
+    ----------------
 
     The containing struct should have the Available Items preloaded, in order.
 
@@ -49,8 +49,8 @@ defmodule Nesto.NestedSubform do
       |> Repo.preload(items: from(i in YourApp.YourContext.YourAssocSchema, order_by: i.display_order))
     ```
 
-    IN YOUR MAIN SCHEMA
-    ===================
+    IN YOUR MAIN SCHEMA:
+    --------------------
 
     You need to add your sub schema in cast_assoc in the changeset function you're going to use
 
@@ -62,8 +62,8 @@ defmodule Nesto.NestedSubform do
       end
     ```
 
-    IN YOUR LIVEVIEW
-    ================
+    IN YOUR LIVEVIEW:
+    -----------------
 
     You must 'use Nesto.NestedSubform' to bring in the event handlers. Note the del_existing. This contains a checkbox that has to have a unique ID, otherwise liveview will cut corners and leave it checked!
 

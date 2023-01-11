@@ -2,6 +2,8 @@
 
 **Nested Form Helpers**
 
+Currently supposed [nested subforms](Nesto.NestedSubform.html)
+
 ## Installation
 
 If [available in Hex](https://hex.pm/docs/publish), the package can be installed
