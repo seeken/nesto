@@ -17,6 +17,10 @@ defmodule Nesto.NestedSubform do
     Most important, have your schema assocs setup correctly, with main schema has_many and the associated schema belongs_to.
 
 
+    Items to look for to replace below:
+    - :your_assoc_schema
+
+
     IN YOUR SUB SCHEMA:
     ===============
 
@@ -64,7 +68,7 @@ defmodule Nesto.NestedSubform do
     IN YOUR LIVEVIEW
     ================
 
-    You must 'use Nesto.NestedSubform' to bring in the event handlers
+    You must 'use Nesto.NestedSubform' to bring in the event handlers. Note the del_existing. This contains a checkbox that has to have a unique ID, otherwise liveview will cut corners and leave it checked!
 
     ```elixir
       <.nesto_subform title="Name of this subform for header" form={form} type={:your_assoc_schema} >
@@ -81,16 +85,16 @@ defmodule Nesto.NestedSubform do
       </.nesto_subform>
     ```
 
-    You must add add_blank_dep functions for each assoc type:
+    You must add add_blank_dep functions for each assoc type, these will be called by the handlers
 
-
-  def add_blank_dep(:your_assoc_schema) do
-    YourApp.YourContext.create_changeset_for_your_assoc_schema(
-      # NOTE temp_id
-      %YourApp.YourContext.YourAssocSchema{temp_id: get_temp_id()}
-    )
-  end
-
+  ```elixir
+    def add_blank_dep(:your_assoc_schema) do
+      YourApp.YourContext.create_changeset_for_your_assoc_schema(
+        # NOTE temp_id
+        %YourApp.YourContext.YourAssocSchema{temp_id: get_temp_id()}
+      )
+    end
+  ```
 
     You can have sub-sub-forms, too. You need to make the preloads and changesets to include the sub-assocs.
 =
