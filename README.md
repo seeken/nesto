@@ -2,7 +2,7 @@
 
 **Nested Form Helpers**
 
-Currently supposed [nested subforms](Nesto.NestedSubform.html)
+Currently supports [nested subforms](Nesto.NestedSubform.html)
 
 ## Installation
 
