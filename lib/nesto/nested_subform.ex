@@ -77,24 +77,23 @@ defmodule Nesto.NestedSubform do
         </:cell>
         <:del_existing :let={sub_form}>
           <%= hidden_input sub_form, :id %>
-          <.checkbox id={"your_assoc_name_#{sub_form.data.id}"} form={sub_form} field={:delete} label="Delete"/>
+          <.checkbox id={"your_assoc_name_\#{sub_form.data.id}"} form={sub_form} field={:delete} label="Delete"/>
         </:del_existing>
       </.nesto_subform>
     ```
 
     You must add add_blank_dep functions for each assoc type, these will be called by the handlers
 
-  ```elixir
-    def add_blank_dep(:your_assoc_schema) do
-      YourApp.YourContext.create_changeset_for_your_assoc_schema(
-        # NOTE temp_id
-        %YourApp.YourContext.YourAssocSchema{temp_id: get_temp_id()}
-      )
-    end
-  ```
+    ```elixir
+      def add_blank_dep(:your_assoc_schema) do
+        YourApp.YourContext.create_changeset_for_your_assoc_schema(
+          # NOTE temp_id
+          %YourApp.YourContext.YourAssocSchema{temp_id: get_temp_id()}
+        )
+      end
+    ```
 
     You can have sub-sub-forms, too. You need to make the preloads and changesets to include the sub-assocs.
-=
 
     ```elixir
       <.nesto_subform title="Name of subform" form={form} type={:your_assoc_schema} >
@@ -103,7 +102,7 @@ defmodule Nesto.NestedSubform do
         </:cell>
         <:del_existing :let={sub_form}>
           <%= hidden_input sub_form, :id %>
-          <.checkbox id={"your_assoc_schema#{sub_form.data.id}"} form={sub_form} field={:delete} label="Delete"/>
+          <.checkbox id={"your_assoc_schema\#{sub_form.data.id}"} form={sub_form} field={:delete} label="Delete"/>
         </:del_existing>
         <:subsection :let={sub_form}>
           <.nesto_subform title="Name of sub-sub-form" form={sub_form} type={:sub_sub_assoc_name} parent={:your_assoc_schema} index={sub_form.index} >
@@ -112,7 +111,7 @@ defmodule Nesto.NestedSubform do
             </:cell>
             <:del_existing :let={sub_sub_form}>
               <%= hidden_input sub_sub_form, :id %>
-              <.checkbox id={"sub_sub_assoc_name#{sub_sub_form.data.id}"} form={sub_sub_form} field={:delete} label="Delete"/>
+              <.checkbox id={"sub_sub_assoc_name\#{sub_sub_form.data.id}"} form={sub_sub_form} field={:delete} label="Delete"/>
             </:del_existing>
           </.nesto_subform>
         </:subsection>
