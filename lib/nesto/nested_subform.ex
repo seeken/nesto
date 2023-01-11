@@ -8,18 +8,15 @@ defmodule Nesto.NestedSubform do
   @moduledoc """
     Adapted from https://fullstackphoenix.com/tutorials/nested-model-forms-with-phoenix-liveview
 
-    This module is self contained. If you want to style it, you copy this to your project and change it there. Note you have to update the 'import Nesto.NestedSubform' in the __using__
+    This module is styled to work with a specific project.
+
+    If you want to style it or modify behavior, you copy this to your project and change it there. Note you have to update the 'import Nesto.NestedSubform' in the __using__
 
     Can create up to 2 level deep nested forms.
 
     When using this form, you must:
 
     Most important, have your schema assocs setup correctly, with main schema has_many and the associated schema belongs_to.
-
-
-    Items to look for to replace below:
-    - :your_assoc_schema
-
 
     IN YOUR SUB SCHEMA:
     ===============
