@@ -3,12 +3,120 @@ defmodule Nesto.NestedSubform do
   use Phoenix.HTML
   use Phoenix.Component
   use PetalComponents
+  import Ecto.Changeset
 
   @moduledoc """
     Adapted from https://fullstackphoenix.com/tutorials/nested-model-forms-with-phoenix-liveview
 
+    This module is self contained. If you want to style it, you copy this to your project and change it there. Note you have to update the 'import Nesto.NestedSubform' in the __using__
+
     Can create up to 2 level deep nested forms.
 
+    When using this form, you must:
+
+    Most important, have your schema assocs setup correctly, with main schema has_many and the associated schema belongs_to.
+
+
+    IN YOUR SUB SCHEMA:
+    ===============
+
+    add temp_id and delete virtual fields to the assoc's schema and changeset, and pass changeset through
+    the maybe_mark_for_deletion.
+
+    ```elixir
+      # In schema:
+      field :temp_id, :string, virtual: true
+      field :delete, :boolean, virtual: true
+
+      #Example Changeset
+
+      def changeset(example, attrs) do
+        example
+        |> Map.put(:temp_id, example.temp_id || attrs["temp_id"])
+        |> cast(attrs, [:your, :other, :fields , :delete])
+        |> Nesto.NestedSubform.maybe_mark_for_deletion()
+      end
+    ```
+
+    IN YOUR CONTEXT
+    ===============
+
+    The containing struct should have the Available Items preloaded, in order.
+
+    ```elixir
+      Repo.get!(YourMainSchema, id)
+      |> Repo.preload(items: from(i in YourApp.YourContext.YourAssocSchema, order_by: i.display_order))
+    ```
+
+    IN YOUR MAIN SCHEMA
+    ===================
+
+    You need to add your sub schema in cast_assoc in the changeset function you're going to use
+
+    ```elixir
+      def changeset(example, attrs) do
+        example
+        |> cast(attrs, [:your, :fields])
+        |> cast_assoc( :your_assoc_schema )
+      end
+    ```
+
+    IN YOUR LIVEVIEW
+    ================
+
+    You must 'use Nesto.NestedSubform' to bring in the event handlers
+
+    ```elixir
+      <.nesto_subform title="Name of this subform for header" form={form} type={:your_assoc_schema} >
+        <:cell :let={sub_form}>
+          ### Your first field
+        </:cell>
+        <:cell :let={sub_form}>
+          ### Your second field, etc
+        </:cell>
+        <:del_existing :let={sub_form}>
+          <%= hidden_input sub_form, :id %>
+          <.checkbox id={"your_assoc_name_#{sub_form.data.id}"} form={sub_form} field={:delete} label="Delete"/>
+        </:del_existing>
+      </.nesto_subform>
+    ```
+
+    You must add add_blank_dep functions for each assoc type:
+
+
+  def add_blank_dep(:your_assoc_schema) do
+    YourApp.YourContext.create_changeset_for_your_assoc_schema(
+      # NOTE temp_id
+      %YourApp.YourContext.YourAssocSchema{temp_id: get_temp_id()}
+    )
+  end
+
+
+    You can have sub-sub-forms, too. You need to make the preloads and changesets to include the sub-assocs.
+=
+
+    ```elixir
+      <.nesto_subform title="Name of subform" form={form} type={:your_assoc_schema} >
+        <:cell :let={sub_form}>
+          ### Field
+        </:cell>
+        <:del_existing :let={sub_form}>
+          <%= hidden_input sub_form, :id %>
+          <.checkbox id={"your_assoc_schema#{sub_form.data.id}"} form={sub_form} field={:delete} label="Delete"/>
+        </:del_existing>
+        <:subsection :let={sub_form}>
+          <.nesto_subform title="Name of sub-sub-form" form={sub_form} type={:sub_sub_assoc_name} parent={:your_assoc_schema} index={sub_form.index} >
+            <:cell :let={sub_sub_form}>
+              Field ...
+            </:cell>
+            <:del_existing :let={sub_sub_form}>
+              <%= hidden_input sub_sub_form, :id %>
+              <.checkbox id={"sub_sub_assoc_name#{sub_sub_form.data.id}"} form={sub_sub_form} field={:delete} label="Delete"/>
+            </:del_existing>
+          </.nesto_subform>
+        </:subsection>
+      </.nesto_subform>
+    ```
 
   """
 
@@ -75,6 +183,17 @@ defmodule Nesto.NestedSubform do
 
     """
   end
+
+  def maybe_mark_for_deletion(%{data: %{id: nil}} = changeset), do: changeset
+
+  def maybe_mark_for_deletion(changeset) do
+    if get_change(changeset, :delete) do
+      %{changeset | action: :delete}
+    else
+      changeset
+    end
+  end
+
 
   defmacro __using__(_) do
     quote do
