@@ -36,13 +36,17 @@ defmodule Nesto.Helpers do
     # IO.inspect(fk_atom)
     # IO.inspect(opt_id)
     # IO.inspect(data_atom)
+
+
+    ## TODO change to return errros
+
     try do
       match =
         get_field(form.source, assoc_atom)
         #  |> IO.inspect(label: "field #{fk_atom}")
         |> Enum.find(fn i -> Map.get(i, fk_atom) == opt_id end)
 
-      # |> IO.inspect(label: "match")
+        #|> IO.inspect(label: "match")
       {Map.get(match, data_atom), match}
     rescue
       _err ->
