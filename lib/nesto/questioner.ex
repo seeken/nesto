@@ -2,7 +2,6 @@ defmodule Nesto.Questioner do
   use Phoenix.HTML
   use Phoenix.Component
   use PetalComponents
-  import Ecto.Changeset
 
   import Nesto.Helpers
 
