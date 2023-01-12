@@ -28,15 +28,13 @@ defmodule Nesto.Helpers do
 
 
 
+  @doc """
+    From an form, we try to fetch the existing data/or change from a changeset
+
+  """
 
 
   def change_or_data(form, assoc_atom, fk_atom, opt_id, data_atom) do
-    # IO.inspect(form.source.data, label: "Source")
-    # IO.inspect(assoc_atom)
-    # IO.inspect(fk_atom)
-    # IO.inspect(opt_id)
-    # IO.inspect(data_atom)
-
 
     ## TODO change to return errros
 
