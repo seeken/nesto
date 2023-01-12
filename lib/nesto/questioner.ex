@@ -22,10 +22,11 @@ defmodule Nesto.Questioner do
           <input
             type="hidden"
             name={gen_name(@form, [@association, index, @association_ref_to_question])}
-            value={question.id}
+            value={Map.get(question, @question_id_field)}
             id={gen_id(@form, [@association, index, @association_ref_to_question])}
           />
           <label class={label_class()}>
+            <!-- change to render a slot... -->
             <%= Map.get(question, @question_question_field) %>
             <input
               type="text"
