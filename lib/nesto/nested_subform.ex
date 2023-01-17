@@ -8,6 +8,8 @@ defmodule Nesto.NestedSubform do
   @moduledoc """
     Adapted from https://fullstackphoenix.com/tutorials/nested-model-forms-with-phoenix-liveview
 
+    Updated from https://kobrakai.de/kolumne/one-to-many-liveview-form
+
     This module is styled to work with a specific project.
 
     If you want to style it or modify behavior, you copy this to your project and change it there. Note you have to update the 'import Nesto.NestedSubform' in the __using__
@@ -21,19 +23,17 @@ defmodule Nesto.NestedSubform do
     IN YOUR SUB SCHEMA:
     -------------------
 
-    add temp_id and delete virtual fields to the assoc's schema and changeset, and pass changeset through
+    add delete virtual field to the assoc's schema and changeset, and pass changeset through
     the maybe_mark_for_deletion.
 
     ```elixir
       # In schema:
-      field :temp_id, :string, virtual: true
       field :delete, :boolean, virtual: true
 
       #Example Changeset
 
       def changeset(example, attrs) do
         example
-        |> Map.put(:temp_id, example.temp_id || attrs["temp_id"])
         |> cast(attrs, [:your, :other, :fields , :delete])
         |> Nesto.NestedSubform.maybe_mark_for_deletion()
       end
@@ -82,17 +82,6 @@ defmodule Nesto.NestedSubform do
       </.nesto_subform>
     ```
 
-    You must add add_blank_dep functions for each assoc type, these will be called by the handlers
-
-    ```elixir
-      def add_blank_dep(:your_assoc_schema) do
-        YourApp.YourContext.create_changeset_for_your_assoc_schema(
-          # NOTE temp_id
-          %YourApp.YourContext.YourAssocSchema{temp_id: get_temp_id()}
-        )
-      end
-    ```
-
     You can have sub-sub-forms, too. You need to make the preloads and changesets to include the sub-assocs.
 
     ```elixir
@@ -133,11 +122,10 @@ defmodule Nesto.NestedSubform do
               </td>
               <td>
                 <%= label(sub_form, "delete") %><br />
-                <%= if is_nil(sub_form.data.temp_id) do %>
+                <%= if sub_form.data.id do %>
                   <%= render_slot(@del_existing, sub_form) %>
                 <% else %>
-                  <%= hidden_input(sub_form, :temp_id) %>
-                  <.remove_button type={@type} remove={if assigns[:parent] do sub_form.index else sub_form.data.temp_id end }
+                  <.remove_button type={@type} remove={sub_form.index}
                     parent={assigns[:parent]} index={assigns[:index]}/>
                 <% end %>
               </td>
@@ -205,15 +193,6 @@ defmodule Nesto.NestedSubform do
         |> append_at(path, dep)
       end
 
-      defp get_temp_id, do: :crypto.strong_rand_bytes(5) |> Base.url_encode64() |> binary_part(0, 5)
-
-      defp remove_temp_item(list, remove_id) do
-        list
-        |> Enum.reject(fn %{data: dep} ->
-          dep.temp_id == remove_id
-        end)
-      end
-
       def handle_event(
             "add_dep",
             %{"type" => dep_type, "index" => index, "parent-type" => parent_type} = _params,
@@ -225,7 +204,7 @@ defmodule Nesto.NestedSubform do
 
         changeset =
           socket.assigns.changeset
-          |> add_dep([parent_type_atom, index, dep_atom], add_blank_dep(dep_atom))
+          |> add_dep([parent_type_atom, index, dep_atom], %{})
 
         {:noreply, assign(socket, changeset: changeset)}
       end
@@ -235,7 +214,7 @@ defmodule Nesto.NestedSubform do
 
         changeset =
           socket.assigns.changeset
-          |> add_dep([dep_atom], add_blank_dep(dep_atom))
+          |> add_dep([dep_atom], %{})
 
         {:noreply, assign(socket, changeset: changeset)}
       end
@@ -262,16 +241,13 @@ defmodule Nesto.NestedSubform do
         {:noreply, assign(socket, changeset: changeset)}
       end
 
-      def handle_event("remove_dep", %{"type" => dep_type, "remove" => remove_id}, socket) do
+      def handle_event("remove_dep", %{"type" => dep_type, "remove" => remove_index}, socket) do
         dep_atom = String.to_atom(dep_type)
-
-        replacement_deps =
-          Map.get(socket.assigns.changeset.changes, dep_atom)
-          |> remove_temp_item(remove_id)
+        remove_index = String.to_integer(remove_index)
 
         changeset =
           socket.assigns.changeset
-          |> Ecto.Changeset.put_assoc(dep_atom, replacement_deps)
+          |> delete_at([dep_atom, remove_index])
 
         {:noreply, assign(socket, changeset: changeset)}
       end
