@@ -198,8 +198,8 @@ defmodule Nesto.NestedSubform do
             %{"type" => dep_type, "index" => index, "parent-type" => parent_type} = _params,
             socket
           ) do
-        dep_atom = String.to_atom(dep_type)
-        parent_type_atom = String.to_atom(parent_type)
+        dep_atom = String.to_existing_atom(dep_type)
+        parent_type_atom = String.to_existing_atom(parent_type)
         index = String.to_integer(index)
 
         changeset =
@@ -210,7 +210,7 @@ defmodule Nesto.NestedSubform do
       end
 
       def handle_event("add_dep", %{"type" => dep_type} = _params, socket) do
-        dep_atom = String.to_atom(dep_type)
+        dep_atom = String.to_existing_atom(dep_type)
 
         changeset =
           socket.assigns.changeset
@@ -229,8 +229,8 @@ defmodule Nesto.NestedSubform do
             },
             socket
           ) do
-        dep_atom = String.to_atom(dep_type)
-        parent_type_atom = String.to_atom(parent_type)
+        dep_atom = String.to_existing_atom(dep_type)
+        parent_type_atom = String.to_existing_atom(parent_type)
         index = String.to_integer(index)
         remove_index = String.to_integer(remove_index)
 
@@ -242,7 +242,7 @@ defmodule Nesto.NestedSubform do
       end
 
       def handle_event("remove_dep", %{"type" => dep_type, "remove" => remove_index}, socket) do
-        dep_atom = String.to_atom(dep_type)
+        dep_atom = String.to_existing_atom(dep_type)
         remove_index = String.to_integer(remove_index)
 
         changeset =
