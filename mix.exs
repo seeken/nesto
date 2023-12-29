@@ -32,9 +32,10 @@ defmodule Nesto.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:phoenix, "~> 1.6"},
-      {:phoenix_live_view, "~> 0.18"},
-      {:petal_components, "~> 0.19.6"},
+      {:phoenix, "~> 1.7"},
+      {:phoenix_html_helpers, "~> 1.0"},
+      {:phoenix_live_view, "~> 0.20"},
+      {:petal_components, "~> 1.0"},
 
       {:ex_doc, "~> 0.27", only: :dev, runtime: false},
       # {:dep_from_hexpm, "~> 0.3.0"},
