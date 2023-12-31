@@ -1,5 +1,8 @@
 defmodule Nesto.Questioner do
-  use Phoenix.HTML
+
+  import Phoenix.HTML
+  import Phoenix.HTML.Form
+  use PhoenixHTMLHelpers
   use Phoenix.Component
   use PetalComponents
 
