@@ -16,8 +16,12 @@ Mix.install([
   {:nesto, path: "../nesto"}
 ])
 
-defmodule Nesto.Run.ErrorView do
-  def render(template, _), do: Phoenix.Controller.status_message_from_template(template)
+defmodule Nesto.ErrorView do
+  def render(template, a) do
+    IO.inspect(a)
+   Phoenix.Controller.status_message_from_template(template)
+  end
+
 end
 
 defmodule Nesto.Run.Event do
@@ -105,7 +109,7 @@ defmodule Nesto.Run.HomeLive do
   use Phoenix.HTML
   use Phoenix.Component
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, changeset: Nesto.Run.Option.changeset(%Nesto.Run.Option{}, %{}))}
+    {:ok, assign(socket, changeset: Nesto.Run.Event.changeset(%Nesto.Run.Event{}, %{}))}
   end
 
   defp phx_vsn, do: Application.spec(:phoenix, :vsn)
@@ -129,9 +133,9 @@ defmodule Nesto.Run.HomeLive do
   def render(assigns) do
     ~H"""
     <div>HI
-    <%!-- <.form :let={form} for={@changeset} phx-change="validate" phx-submit="save">
+    <.form :let={form} for={@changeset} phx-change="validate" phx-submit="save">
 
-      <.nesto_subform title="Name of this subform for header" form={form} type={:options} >
+      <.nesto_subform title="Name of this subform for header" form={form} type={:questions} >
           <:cell :let={sub_form}>
             ### Your first field
           </:cell>
@@ -144,7 +148,7 @@ defmodule Nesto.Run.HomeLive do
           </:del_existing>
         </.nesto_subform>
 
-      </.form> --%>
+      </.form>
       </div>
     """
   end
