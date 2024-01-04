@@ -33,7 +33,7 @@ defmodule Nesto.MixProject do
   defp deps do
     [
       {:phoenix, "~> 1.7"},
-      {:phoenix_html_helpers, "~> 1.0"},
+      #{:phoenix_html_helpers, "~> 1.0"},
       {:phoenix_live_view, "~> 0.20"},
       {:petal_components, "~> 1.0"},
 

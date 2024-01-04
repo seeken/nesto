@@ -1,10 +1,8 @@
 defmodule Nesto.NestedSubform do
 
-  import Phoenix.HTML
-  import Phoenix.HTML.Form
-  use PhoenixHTMLHelpers
   use Phoenix.Component
   use PetalComponents
+  use Phoenix.HTML
   import Ecto.Changeset
 
   @moduledoc """
