@@ -68,7 +68,7 @@ defmodule Nesto.NestedSubform do
     You must 'use Nesto.NestedSubform' to bring in the event handlers. Note the del_existing. This contains a checkbox that has to have a unique ID, otherwise liveview will cut corners and leave it checked!
 
     ```elixir
-      <.nesto_subform title="Name of this subform for header" form={form} type={:your_assoc_schema} >
+      <.nested_subform title="Name of this subform for header" form={form} type={:your_assoc_schema} >
         <:cell :let={sub_form}>
           ### Your first field
         </:cell>
@@ -79,13 +79,13 @@ defmodule Nesto.NestedSubform do
           <%= hidden_input sub_form, :id %>
           <.checkbox id={"your_assoc_name_\#{sub_form.data.id}"} form={sub_form} field={:delete} label="Delete"/>
         </:del_existing>
-      </.nesto_subform>
+      </.nested_subform>
     ```
 
     You can have sub-sub-forms, too. You need to make the preloads and changesets to include the sub-assocs.
 
     ```elixir
-      <.nesto_subform title="Name of subform" form={form} type={:your_assoc_schema} >
+      <.nested_subform title="Name of subform" form={form} type={:your_assoc_schema} >
         <:cell :let={sub_form}>
           ### Field
         </:cell>
@@ -94,7 +94,7 @@ defmodule Nesto.NestedSubform do
           <.checkbox id={"your_assoc_schema\#{sub_form.data.id}"} form={sub_form} field={:delete} label="Delete"/>
         </:del_existing>
         <:subsection :let={sub_form}>
-          <.nesto_subform title="Name of sub-sub-form" form={sub_form} type={:sub_sub_assoc_name} parent={:your_assoc_schema} index={sub_form.index} >
+          <.nested_subform title="Name of sub-sub-form" form={sub_form} type={:sub_sub_assoc_name} parent={:your_assoc_schema} index={sub_form.index} >
             <:cell :let={sub_sub_form}>
               Field ...
             </:cell>
@@ -102,15 +102,15 @@ defmodule Nesto.NestedSubform do
               <%= hidden_input sub_sub_form, :id %>
               <.checkbox id={"sub_sub_assoc_name\#{sub_sub_form.data.id}"} form={sub_sub_form} field={:delete} label="Delete"/>
             </:del_existing>
-          </.nesto_subform>
+          </.nested_subform>
         </:subsection>
-      </.nesto_subform>
+      </.nested_subform>
     ```
 
   """
 
 
-  def nesto_subform(assigns) do
+  def nested_subform(assigns) do
     ~H"""
     <.card>
       <.card_content heading={if assigns[:title] do @title else nil end}>

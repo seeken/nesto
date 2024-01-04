@@ -88,6 +88,7 @@ defmodule Nesto.Run.Question do
 
   schema "questions" do
     field :name, :string
+    field :disp_order, :string
     field :delete, :boolean, virtual: true
     has_many :options, Nesto.Run.Option
     timestamps()
@@ -137,18 +138,18 @@ defmodule Nesto.Run.HomeLive do
     <div>HI
     <.form :let={form} for={@changeset} phx-change="validate" phx-submit="save">
 
-      <.nesto_subform title="Name of this subform for header" form={form} type={:questions} >
+      <.nested_subform title="Question Builder" form={form} type={:questions} >
           <:cell :let={sub_form}>
-            ### Your first field
+            <%= text_input sub_form, :name, class: Nesto.Helpers.input_class() %>
           </:cell>
           <:cell :let={sub_form}>
-            ### Your second field, etc
+            <%= text_input sub_form, :disp_order, class: Nesto.Helpers.input_class() %>
           </:cell>
           <:del_existing :let={sub_form}>
             <%= hidden_input sub_form, :id %>
             <checkbox id={"your_assoc_name_\#{sub_form.data.id}"} form={sub_form} field={:delete} label="Delete"/>
           </:del_existing>
-        </.nesto_subform>
+        </.nested_subform>
 
       </.form>
       </div>

@@ -5,8 +5,8 @@ defmodule Nesto.Helpers do
 
   @container_class "mb-6"
   @label_class "mb-2 font-medium text-sm block text-gray-900 dark:text-gray-200"
-  @input_class "border-gray-300 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:focus:border-primary-500 sm:text-sm block disabled:bg-gray-100 disabled:cursor-not-allowed shadow-sm w-full rounded-md dark:bg-gray-800 dark:text-gray-300 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-  @select_class "border-gray-300 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:focus:border-primary-500
+  @input_class "shadow appearance-none border border-black rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+  @select_class "border-gray-300 focus:border-black-500 focus:ring-black-500 dark:border-gray-600 dark:focus:border-black-500
   block w-full disabled:bg-gray-100 disabled:cursor-not-allowed pl-3 pr-10 py-2 text-base focus:outline-none sm:text-sm
   rounded-md dark:disabled:bg-gray-700 dark:text-gray-300 dark:bg-gray-800 phx-no-feedback"
 
