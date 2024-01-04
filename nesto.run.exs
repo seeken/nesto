@@ -20,12 +20,33 @@ defmodule Nesto.Run.ErrorView do
   def render(template, _), do: Phoenix.Controller.status_message_from_template(template)
 end
 
+defmodule Nesto.Run.Event do
+  use Ecto.Schema
+  import Ecto.Changeset
+
+  schema "events" do
+    field :name, :string
+    field :delete, :boolean, virtual: true
+    has_many :questions, Nesto.Run.Question
+    has_many :options, Nesto.Run.Option
+    timestamps()
+  end
+
+  def changeset(event, attrs) do
+    event
+    |> cast(attrs, [:name, :delete])
+    |> cast_assoc(:questions, required: false)
+    |> cast_assoc(:options, required: false)
+    |> Nesto.NestedSubform.maybe_mark_for_deletion()
+  end
+end
 defmodule Nesto.Run.Option do
   use Ecto.Schema
   import Ecto.Changeset
 
   schema "options" do
     field :name, :string
+    belongs_to :event, Nesto.Run.Event
     field :delete, :boolean, virtual: true
     has_many :option_choices, Nesto.Run.OptionChoice
     timestamps()
@@ -82,6 +103,7 @@ defmodule Nesto.Run.HomeLive do
   use Phoenix.LiveView, layout: {__MODULE__, :live}
   use Nesto.NestedSubform
   use Phoenix.HTML
+  use Phoenix.Component
   def mount(_params, _session, socket) do
     {:ok, assign(socket, changeset: Nesto.Run.Option.changeset(%Nesto.Run.Option{}, %{}))}
   end
@@ -106,9 +128,10 @@ defmodule Nesto.Run.HomeLive do
 
   def render(assigns) do
     ~H"""
-    <.form :let={form} for={@changeset} phx-change="validate" phx-submit="save">
+    <div>HI
+    <%!-- <.form :let={form} for={@changeset} phx-change="validate" phx-submit="save">
 
-      <.nesto_subform title="Name of this subform for header" form={form} type={:your_assoc_schema} >
+      <.nesto_subform title="Name of this subform for header" form={form} type={:options} >
           <:cell :let={sub_form}>
             ### Your first field
           </:cell>
@@ -121,7 +144,8 @@ defmodule Nesto.Run.HomeLive do
           </:del_existing>
         </.nesto_subform>
 
-      </.form>
+      </.form> --%>
+      </div>
     """
   end
 
