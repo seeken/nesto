@@ -40,6 +40,7 @@ defmodule Nesto.Run.Option do
   def changeset(option, attrs) do
     option
     |> cast(attrs, [:name, :delete])
+    |> cast_assoc(:option_choices, with: &Nesto.Run.OptionChoice.changeset/2)
     |> Nesto.NestedSubform.maybe_mark_for_deletion()
   end
 end
@@ -57,7 +58,7 @@ defmodule Nesto.Run.OptionChoice do
 
   def changeset(option_choice, attrs) do
     option_choice
-    |> Map.put(:temp_id, option_choice.temp_id || attrs["temp_id"])
+    #|> Map.put(:temp_id, option_choice.temp_id || attrs["temp_id"])
     |> cast(attrs, [:name, :delete])
     |> Nesto.NestedSubform.maybe_mark_for_deletion()
   end
@@ -71,14 +72,12 @@ defmodule Nesto.Run.Question do
     field :name, :string
     field :disp_order, :string
     field :delete, :boolean, virtual: true
-    has_many :options, Nesto.Run.Option
     timestamps()
   end
 
   def changeset(question, attrs) do
     question
     |> cast(attrs, [:name, :delete])
-    |> cast_assoc(:options, required: false)
     |> Nesto.NestedSubform.maybe_mark_for_deletion()
   end
 end
@@ -94,12 +93,10 @@ defmodule Nesto.Run.Event do
   end
 
   def changeset(event, attrs) do
-    event |> IO.inspect(label: "event")
+    event
     |> cast(attrs, [:name])
-    |> IO.inspect(label: "cast")
     |> cast_assoc(:questions, with: &Nesto.Run.Question.changeset/2)
-    |> IO.inspect(label: "cast_assoc")
-    |> cast_assoc(:options)
+    |> cast_assoc(:options, with: &Nesto.Run.Option.changeset/2)
   end
 end
 defmodule Nesto.Run.HomeLive do
@@ -148,7 +145,7 @@ defmodule Nesto.Run.HomeLive do
     <div>HI
       <.form :let={form} for={@changeset} phx-change="validate" phx-submit="save">
 
-        <.nested_subform title="Question Builder" form={form} type={:questions} >
+        <.nested_subform title="Question Builder (Subform)" form={form} type={:questions} >
             <:cell :let={sub_form}>
               <%= text_input sub_form, :name, class: Nesto.Helpers.input_class() %>
             </:cell>
@@ -160,6 +157,33 @@ defmodule Nesto.Run.HomeLive do
               <checkbox id={"your_assoc_name_\#{sub_form.data.id}"} form={sub_form} field={:delete} label="Delete"/>
             </:del_existing>
           </.nested_subform>
+
+          <.nested_subform title="Options Builder (Double Nested Subform)" form={form} type={:options} >
+            <:cell :let={sub_form}>
+              <%= text_input sub_form, :name, class: Nesto.Helpers.input_class() %>
+            </:cell>
+            <:cell :let={sub_form}>
+              <%= text_input sub_form, :disp_order, class: Nesto.Helpers.input_class() %>
+            </:cell>
+
+            <:subsection :let={sub_form}>
+              <.nested_subform form={sub_form} type={:option_choices} parent={:options} index={sub_form.index} >
+                <:cell :let={sub_sub_form}>
+                  <%= text_input sub_sub_form, :name, class: Nesto.Helpers.input_class() %>
+                </:cell>
+                <:del_existing :let={sub_sub_form}>
+                  <%= hidden_input sub_sub_form, :id %>
+                  <checkbox id={"sub_sub_assoc_name\#{sub_sub_form.data.id}"} form={sub_sub_form} field={:delete} label="Delete"/>
+                </:del_existing>
+              </.nested_subform>
+            </:subsection>
+
+            <:del_existing :let={sub_form}>
+              <%= hidden_input sub_form, :id %>
+              <checkbox id={"your_assoc_name_\#{sub_form.data.id}"} form={sub_form} field={:delete} label="Delete"/>
+            </:del_existing>
+          </.nested_subform>
+
 
         </.form>
       </div>
