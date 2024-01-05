@@ -24,26 +24,7 @@ defmodule Nesto.ErrorView do
 
 end
 
-defmodule Nesto.Run.Event do
-  use Ecto.Schema
-  import Ecto.Changeset
 
-  schema "events" do
-    field :name, :string
-    field :delete, :boolean, virtual: true
-    has_many :questions, Nesto.Run.Question
-    has_many :options, Nesto.Run.Option
-    timestamps()
-  end
-
-  def changeset(event, attrs) do
-    event
-    |> cast(attrs, [:name, :delete])
-    |> cast_assoc(:questions, required: false)
-    |> cast_assoc(:options, required: false)
-    |> Nesto.NestedSubform.maybe_mark_for_deletion()
-  end
-end
 defmodule Nesto.Run.Option do
   use Ecto.Schema
   import Ecto.Changeset
@@ -101,20 +82,49 @@ defmodule Nesto.Run.Question do
     |> Nesto.NestedSubform.maybe_mark_for_deletion()
   end
 end
+defmodule Nesto.Run.Event do
+  use Ecto.Schema
+  import Ecto.Changeset
 
+  schema "events" do
+    field :name, :string
+    has_many :questions, Nesto.Run.Question
+    has_many :options, Nesto.Run.Option
+    timestamps()
+  end
 
-
+  def changeset(event, attrs) do
+    event |> IO.inspect(label: "event")
+    |> cast(attrs, [:name])
+    |> IO.inspect(label: "cast")
+    |> cast_assoc(:questions, with: &Nesto.Run.Question.changeset/2)
+    |> IO.inspect(label: "cast_assoc")
+    |> cast_assoc(:options)
+  end
+end
 defmodule Nesto.Run.HomeLive do
   use Phoenix.LiveView, layout: {__MODULE__, :live}
   use Nesto.NestedSubform
   use Phoenix.HTML
   use Phoenix.Component
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, changeset: Nesto.Run.Event.changeset(%Nesto.Run.Event{}, %{}))}
+    event =  %Nesto.Run.Event{ name: "Test", questions: [%Nesto.Run.Question{ name: 'xx' }], options: []}
+    {:ok, assign(socket, event: event,
+      changeset: Nesto.Run.Event.changeset(event, %{}))}
   end
 
   defp phx_vsn, do: Application.spec(:phoenix, :vsn)
   defp lv_vsn, do: Application.spec(:phoenix_live_view, :vsn)
+
+  def handle_event("validate",%{"event" => params}, socket) do
+    IO.inspect(params, label: "params")
+    changeset =
+      socket.assigns.event
+      |> Nesto.Run.Event.changeset(params)
+      |> IO.inspect(label: "changeset")
+
+    {:noreply, assign(socket, changeset: changeset)}
+  end
 
   def render("live.html", assigns) do
     ~H"""
@@ -136,22 +146,22 @@ defmodule Nesto.Run.HomeLive do
   def render(assigns) do
     ~H"""
     <div>HI
-    <.form :let={form} for={@changeset} phx-change="validate" phx-submit="save">
+      <.form :let={form} for={@changeset} phx-change="validate" phx-submit="save">
 
-      <.nested_subform title="Question Builder" form={form} type={:questions} >
-          <:cell :let={sub_form}>
-            <%= text_input sub_form, :name, class: Nesto.Helpers.input_class() %>
-          </:cell>
-          <:cell :let={sub_form}>
-            <%= text_input sub_form, :disp_order, class: Nesto.Helpers.input_class() %>
-          </:cell>
-          <:del_existing :let={sub_form}>
-            <%= hidden_input sub_form, :id %>
-            <checkbox id={"your_assoc_name_\#{sub_form.data.id}"} form={sub_form} field={:delete} label="Delete"/>
-          </:del_existing>
-        </.nested_subform>
+        <.nested_subform title="Question Builder" form={form} type={:questions} >
+            <:cell :let={sub_form}>
+              <%= text_input sub_form, :name, class: Nesto.Helpers.input_class() %>
+            </:cell>
+            <:cell :let={sub_form}>
+              <%= text_input sub_form, :disp_order, class: Nesto.Helpers.input_class() %>
+            </:cell>
+            <:del_existing :let={sub_form}>
+              <%= hidden_input sub_form, :id %>
+              <checkbox id={"your_assoc_name_\#{sub_form.data.id}"} form={sub_form} field={:delete} label="Delete"/>
+            </:del_existing>
+          </.nested_subform>
 
-      </.form>
+        </.form>
       </div>
     """
   end

@@ -205,7 +205,7 @@ defmodule Nesto.NestedSubform do
         changeset =
           socket.assigns.changeset
           |> add_dep([parent_type_atom, index, dep_atom], %{})
-
+          #|> IO.inspect(label: "changeset")
         {:noreply, assign(socket, changeset: changeset)}
       end
 
@@ -215,6 +215,7 @@ defmodule Nesto.NestedSubform do
         changeset =
           socket.assigns.changeset
           |> add_dep([dep_atom], %{})
+          #|> IO.inspect(label: "changeset")
 
         {:noreply, assign(socket, changeset: changeset)}
       end
