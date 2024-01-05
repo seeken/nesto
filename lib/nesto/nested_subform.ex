@@ -115,35 +115,32 @@ defmodule Nesto.NestedSubform do
     ~H"""
     <div>
       <%= if assigns[:title] do %>
-        <h3 class="">
-          <%= @title %>
-        </h3>
+        <%= @title %>
       <% end %>
+      <table>
+        <%= for sub_form <- inputs_for( @form, @type ) do %>
+          <tr>
+            <td :for={cell <- @cell}>
+              <%= render_slot(cell, sub_form) %>
+            </td>
+            <td>
+              <%= label(sub_form, "delete") %><br />
+              <%= if sub_form.data.id do %>
+                <%= render_slot(@del_existing, sub_form) %>
+              <% else %>
+                <.remove_button type={@type} remove={sub_form.index}
+                  parent={assigns[:parent]} index={assigns[:index]}/>
+              <% end %>
+            </td>
+          </tr>
+          <tr :if={assigns[:subsection]}>
+            <td class="pl-12" colspan={Enum.count(@cell)}>
+              <%= render_slot(@subsection, sub_form) %>
+            </td>
+          </tr>
+        <% end %>
 
-        <table>
-          <%= for sub_form <- inputs_for( @form, @type ) do %>
-            <tr>
-              <td :for={cell <- @cell}>
-                <%= render_slot(cell, sub_form) %>
-              </td>
-              <td>
-                <%= label(sub_form, "delete") %><br />
-                <%= if sub_form.data.id do %>
-                  <%= render_slot(@del_existing, sub_form) %>
-                <% else %>
-                  <.remove_button type={@type} remove={sub_form.index}
-                    parent={assigns[:parent]} index={assigns[:index]}/>
-                <% end %>
-              </td>
-            </tr>
-            <tr :if={assigns[:subsection]}>
-              <td class="pl-24" colspan={Enum.count(@cell)}>
-                <%= render_slot(@subsection, sub_form) %>
-              </td>
-            </tr>
-          <% end %>
-
-        </table>
+      </table>
         <.add_button type={@type} parent={assigns[:parent]} index={assigns[:index]}/> Add
     </div>
     """

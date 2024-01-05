@@ -130,9 +130,7 @@ defmodule Nesto.Run.HomeLive do
       let liveSocket = new window.LiveView.LiveSocket("/live", window.Phoenix.Socket)
       liveSocket.connect()
     </script>
-    <style>
-      * { font-size: 1.1em; }
-    </style>
+
     <%= @inner_content %>
     """
   end
