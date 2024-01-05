@@ -113,8 +113,13 @@ defmodule Nesto.NestedSubform do
 
   def nested_subform(assigns) do
     ~H"""
-    <.card>
-      <.card_content heading={if assigns[:title] do @title else nil end}>
+    <div>
+      <%= if assigns[:title] do %>
+        <h3 class="">
+          <%= @title %>
+        </h3>
+      <% end %>
+
         <table>
           <%= for sub_form <- inputs_for( @form, @type ) do %>
             <tr>
@@ -140,8 +145,7 @@ defmodule Nesto.NestedSubform do
 
         </table>
         <.add_button type={@type} parent={assigns[:parent]} index={assigns[:index]}/> Add
-      </.card_content>
-    </.card>
+    </div>
     """
   end
 
