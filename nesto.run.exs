@@ -18,7 +18,6 @@ Mix.install([
 
 defmodule Nesto.ErrorView do
   def render(template, a) do
-    IO.inspect(a)
    Phoenix.Controller.status_message_from_template(template)
   end
 
@@ -114,11 +113,9 @@ defmodule Nesto.Run.HomeLive do
   defp lv_vsn, do: Application.spec(:phoenix_live_view, :vsn)
 
   def handle_event("validate",%{"event" => params}, socket) do
-    IO.inspect(params, label: "params")
     changeset =
       socket.assigns.event
       |> Nesto.Run.Event.changeset(params)
-      |> IO.inspect(label: "changeset")
 
     {:noreply, assign(socket, changeset: changeset)}
   end
