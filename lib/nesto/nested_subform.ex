@@ -113,7 +113,7 @@ defmodule Nesto.NestedSubform do
 
   def nested_subform(assigns) do
     ~H"""
-    <div>
+    <div class={assigns[:class]}>
       <%= if assigns[:title] do %>
         <%= @title %>
       <% end %>
