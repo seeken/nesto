@@ -118,7 +118,7 @@ defmodule Nesto.NestedSubform do
         <%= @title %>
       <% end %>
       <table>
-        <%= for sub_form <- inputs_for( @form, @type ) do %>
+        <%= inputs_for @form, @type, fn sub_form -> %>
           <tr>
             <td :for={cell <- @cell}>
               <%= render_slot(cell, sub_form) %>
