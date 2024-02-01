@@ -1,7 +1,6 @@
 defmodule Nesto.NestedSubform do
-
   use Phoenix.Component
-  #use PetalComponents
+  # use PetalComponents
   use Phoenix.HTML
 
   import Ecto.Changeset
@@ -110,12 +109,11 @@ defmodule Nesto.NestedSubform do
 
   """
 
-
   def nested_subform(assigns) do
     ~H"""
     <div class={assigns[:class]}>
       <%= if assigns[:title] do %>
-        <%= @title %>
+        <%= @title %> <.add_button type={@type} parent={assigns[:parent]} index={assigns[:index]}/> Add
       <% end %>
       <table>
         <%= inputs_for @form, @type, fn sub_form -> %>
@@ -141,7 +139,10 @@ defmodule Nesto.NestedSubform do
         <% end %>
 
       </table>
-        <.add_button type={@type} parent={assigns[:parent]} index={assigns[:index]}/> Add
+      <%= if ! assigns[:title] do %>
+
+      <.add_button type={@type} parent={assigns[:parent]} index={assigns[:index]}/> Add
+      <% end %>
     </div>
     """
   end
@@ -184,7 +185,6 @@ defmodule Nesto.NestedSubform do
     end
   end
 
-
   defmacro __using__(_) do
     quote do
       import Nesto.NestedSubform
@@ -207,7 +207,8 @@ defmodule Nesto.NestedSubform do
         changeset =
           socket.assigns.changeset
           |> add_dep([parent_type_atom, index, dep_atom], %{})
-          #|> IO.inspect(label: "changeset")
+
+        # |> IO.inspect(label: "changeset")
         {:noreply, assign(socket, changeset: changeset)}
       end
 
@@ -217,7 +218,8 @@ defmodule Nesto.NestedSubform do
         changeset =
           socket.assigns.changeset
           |> add_dep([dep_atom], %{})
-          #|> IO.inspect(label: "changeset")
+
+        # |> IO.inspect(label: "changeset")
 
         {:noreply, assign(socket, changeset: changeset)}
       end
