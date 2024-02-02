@@ -140,7 +140,11 @@ defmodule Nesto.Run.HomeLive do
     <div>HI
       <.form :let={form} for={@changeset} phx-change="validate" phx-submit="save">
 
-        <.nested_subform title="Question Builder (Subform)" form={form} type={:questions} class="border border-black border-3">
+        <.nested_subform  form={form} type={:questions} class="border border-black border-3">
+            <:title>
+              <h3>Question Builder (Subform)
+              </h3>
+            </:title>
             <:cell :let={sub_form}>
               <%= text_input sub_form, :name, class: Nesto.Helpers.input_class() %>
             </:cell>
@@ -154,6 +158,9 @@ defmodule Nesto.Run.HomeLive do
           </.nested_subform>
 
           <.nested_subform title="Options Builder (Double Nested Subform)" form={form} type={:options} class="border border-black border-3">
+            <:title>
+              Options Builder (Double Nested Subform)
+            </:title>
             <:cell :let={sub_form}>
               <%= text_input sub_form, :name, class: Nesto.Helpers.input_class() %>
             </:cell>
@@ -163,6 +170,9 @@ defmodule Nesto.Run.HomeLive do
 
             <:subsection :let={sub_form}>
               <.nested_subform form={sub_form} type={:option_choices} parent={:options} index={sub_form.index} class="border border-black border-3">
+                <:title>
+                  Option Choices
+                </:title>
                 <:cell :let={sub_sub_form}>
                   <%= text_input sub_sub_form, :name, class: Nesto.Helpers.input_class() %>
                 </:cell>

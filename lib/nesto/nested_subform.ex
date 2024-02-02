@@ -112,8 +112,10 @@ defmodule Nesto.NestedSubform do
   def nested_subform(assigns) do
     ~H"""
     <div class={assigns[:class]}>
+
       <%= if assigns[:title] do %>
-        <%= @title %> <.add_button type={@type} parent={assigns[:parent]} index={assigns[:index]}/> Add
+        <%= render_slot(@title) %>
+        <.add_button type={@type} parent={assigns[:parent]} index={assigns[:index]}/> Add
       <% end %>
       <table>
         <%= inputs_for @form, @type, fn sub_form -> %>
