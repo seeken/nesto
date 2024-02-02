@@ -68,7 +68,10 @@ defmodule Nesto.NestedSubform do
     You must 'use Nesto.NestedSubform' to bring in the event handlers. Note the del_existing. This contains a checkbox that has to have a unique ID, otherwise liveview will cut corners and leave it checked!
 
     ```elixir
-      <.nested_subform title="Name of this subform for header" form={form} type={:your_assoc_schema} >
+      <.nested_subform form={form} type={:your_assoc_schema} >
+        <:title>
+          Name of subform
+        </:title>
         <:cell :let={sub_form}>
           ### Your first field
         </:cell>
@@ -85,7 +88,10 @@ defmodule Nesto.NestedSubform do
     You can have sub-sub-forms, too. You need to make the preloads and changesets to include the sub-assocs.
 
     ```elixir
-      <.nested_subform title="Name of subform" form={form} type={:your_assoc_schema} >
+      <.nested_subform form={form} type={:your_assoc_schema} >
+        <:title>
+          Name of subform
+        </:title>
         <:cell :let={sub_form}>
           ### Field
         </:cell>
@@ -94,7 +100,10 @@ defmodule Nesto.NestedSubform do
           <.checkbox id={"your_assoc_schema\#{sub_form.data.id}"} form={sub_form} field={:delete} label="Delete"/>
         </:del_existing>
         <:subsection :let={sub_form}>
-          <.nested_subform title="Name of sub-sub-form" form={sub_form} type={:sub_sub_assoc_name} parent={:your_assoc_schema} index={sub_form.index} >
+          <.nested_subform  form={sub_form} type={:sub_sub_assoc_name} parent={:your_assoc_schema} index={sub_form.index} >
+            <:title>
+              Name of sub-sub-form
+            </:title>
             <:cell :let={sub_sub_form}>
               Field ...
             </:cell>
